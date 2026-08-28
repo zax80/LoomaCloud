@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LoomaCloud.UI.MAUI.Desktop.MainPage"
+             Title="LoomaCloud">
+
+    <Grid Padding="0" ColumnDefinitions="260,*">
+
+        <!-- Sidebar: chat sessions -->
+        <Grid Grid.Column="0" BackgroundColor="#F4F4F4" RowDefinitions="Auto,Auto,*,Auto" Padding="12" RowSpacing="8">
+            <Label Grid.Row="0" Text="LoomaCloud" FontAttributes="Bold" FontSize="20" />
+            <Button Grid.Row="1" Text="+ New chat" Clicked="OnNewChatClicked" />
+
+            <!-- BindableLayout, NOT CollectionView — see the doc comment on
+                 the transcript pager below (Grid.Row="2" in the chat column)
+                 for why: any WinUI ScrollViewer-backed control, including
+                 this same CollectionView, reproduces the native crash the
+                 moment it's scrolled. No scrolling here at all — sessions
+                 render as a plain list; rows are tapped via a
+                 TapGestureRecognizer instead of CollectionView's built-in
+                 SelectionChanged. -->
+            <VerticalStackLayout Grid.Row="2" x:Name="SessionsStack" Spacing="0">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="6,8" ColumnDefinitions="*,Auto">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSessionTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0"
+                                   Text="{Binding Title}"
+                                   LineBreakMode="TailTruncation"
+                                   FontSize="14"
+                                   VerticalOptions="Center" />
+                            <Button Grid.Column="1"
+                                    Text="✕"
+                                    FontSize="12"
+                                    WidthRequest="26"
+                                    HeightRequest="26"
+                                    Padding="0"
+                                    BackgroundColor="Transparent"
+                                    TextColor="Gray"
+                                    CommandParameter="{Binding Id}"
+                                    Clicked="OnDeleteSessionClicked"
+                                    ToolTipProperties.Text="Delete this chat" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+            <Button Grid.Row="3" Text="Saved answers" Clicked="OnViewSavedAnswersClicked" />
+        </Grid>
+
+        <!-- Chat -->
+        <Grid Grid.Column="1" Padding="20" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="10">
+
+            <!-- General composition-root failure (bad config, Ollama unreachable, etc.) -->
+            <Label x:Name="StartupErrorLabel"
+                   Grid.Row="0"
+                   TextColor="Red"
+                   FontAttributes="Bold"
+                   LineBreakMode="WordWrap"
+                   IsVisible="False" />
+
+            <!-- Chat specifically unavailable (McpClient mode today — see IChatUseCase's doc comment) -->
+            <Label x:Name="ChatUnavailableLabel"
+                   Grid.Row="0"
+                   TextColor="DarkOrange"
+                   FontAttributes="Bold"
+                   LineBreakMode="WordWrap"
+                   IsVisible="False" />
+
+            <BoxView Grid.Row="1" HeightRequest="1" Color="LightGray" />
+
+            <!-- WebView, NOT a native scrollable control — see
+                 MainPage.xaml.cs's BuildTranscriptHtml doc comment for the
+                 full story. Short version: CollectionView, then
+                 ScrollView+BindableLayout, then a no-scroll pager were all
+                 tried in that order; the first two both wrap a WinUI
+                 ScrollViewer internally and reproduced an identical native
+                 crash (Microsoft.UI.Xaml.dll, exception 0xC000027B) the
+                 instant scrolling touched them — a real, still-open,
+                 unfixed WinUI3 bug (microsoft/microsoft-ui-xaml #6472,
+                 #9793), not anything in this app's code. The pager avoided
+                 that but couldn't offer real click-and-drag text selection
+                 the way a normal chat UI does. A WebView sidesteps both
+                 problems at once: on Windows it's backed by WebView2
+                 (Chromium), which does its own scrolling and text selection
+                 entirely inside the Chromium engine — a different code path
+                 from the native WinUI ScrollViewer that's crashing. The
+                 transcript is plain HTML rebuilt/patched in code-behind.
+                 There's no separate "Copy" button anymore either — real
+                 click-and-drag text selection plus the OS's own Ctrl+C
+                 makes one redundant, which a Label/Editor never could
+                 offer. "Export as..." is still needed as an explicit
+                 action (it writes a file, not a clipboard copy) and is an
+                 HTML link using a custom URI scheme (looma-export:)
+                 intercepted in OnTranscriptWebViewNavigating, since a
+                 WebView has no native Button.Clicked equivalent. -->
+            <WebView Grid.Row="2" x:Name="TranscriptWebView" Navigating="OnTranscriptWebViewNavigating" />
+
+            <Grid Grid.Row="3" RowDefinitions="Auto,Auto" RowSpacing="6">
+
+                <!-- Shown after attaching an image or document — a preview of what will be sent as context, and a way to drop it before sending. -->
+                <Grid Grid.Row="0" x:Name="PendingAttachmentRow" ColumnDefinitions="*,Auto" IsVisible="False">
+                    <Label Grid.Column="0" x:Name="PendingAttachmentLabel" FontSize="12" TextColor="Gray" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                    <Button Grid.Column="1" Text="✕" Clicked="OnRemovePendingAttachmentClicked" WidthRequest="32" Padding="0" />
+                </Grid>
+
+                <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto" ColumnSpacing="8">
+                    <Button x:Name="MicButton"
+                            Grid.Column="0"
+                            Text="🎙"
+                            WidthRequest="44"
+                            Pressed="OnMicPressed"
+                            Released="OnMicReleased"
+                            ToolTipProperties.Text="Hold to record a voice question" />
+                    <Button x:Name="AttachButton"
+                            Grid.Column="1"
+                            Text="📎"
+                            WidthRequest="44"
+                            Clicked="OnAttachClicked"
+                            ToolTipProperties.Text="Attach an image or document to ask about" />
+                    <Entry x:Name="QuestionEntry"
+                           Grid.Column="2"
+                           Placeholder="Ask a question about your documents..."
+                           Completed="OnSendClicked" />
+
+                    <!-- Ask/Think toggle — hidden entirely unless the configured
+                         BaseModel actually supports reasoning (see MainPage's
+                         OnAppearing, which queries IChatModelCapabilities once).
+                         Per-message, not per-session: read directly off
+                         ThinkSwitch.IsToggled at send time in OnSendClicked. -->
+                    <HorizontalStackLayout Grid.Column="3" x:Name="ThinkToggleRow" Spacing="4" VerticalOptions="Center" IsVisible="False">
+                        <Label Text="Think" FontSize="12" TextColor="Gray" VerticalOptions="Center" />
+                        <Switch x:Name="ThinkSwitch" ToolTipProperties.Text="Let the model reason before answering (slower)" />
+                    </HorizontalStackLayout>
+
+                    <Button x:Name="SendButton" Grid.Column="4" Text="Send" Clicked="OnSendClicked" />
+                    <Button x:Name="SaveButton" Grid.Column="5" Text="Save answer" Clicked="OnSaveAnswerClicked" />
+                </Grid>
+
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

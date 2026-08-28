@@ -1,0 +1,117 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Core", "src\LoomaCloud.Core\LoomaCloud.Core.csproj", "{6E76560D-9A4D-49EE-BCFD-2CD983F7CF88}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Application", "src\LoomaCloud.Application\LoomaCloud.Application.csproj", "{44656E23-DF2C-42FD-B6F3-9EBEDA933DAC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Infrastructure.VectorStore.Qdrant", "src\LoomaCloud.Infrastructure.VectorStore.Qdrant\LoomaCloud.Infrastructure.VectorStore.Qdrant.csproj", "{BE2057D1-E573-4DAC-BD76-B6C8EC461A6F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Infrastructure.VectorStore.Qdrant.Tests", "tests\LoomaCloud.Infrastructure.VectorStore.Qdrant.Tests\LoomaCloud.Infrastructure.VectorStore.Qdrant.Tests.csproj", "{28D733BA-7398-42FF-9D9C-EF8BDDF6C91D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Infrastructure.Llm", "src\LoomaCloud.Infrastructure.Llm\LoomaCloud.Infrastructure.Llm.csproj", "{DF9C92D4-331C-430C-AE76-9095965FC5DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Infrastructure.Llm.Tests", "tests\LoomaCloud.Infrastructure.Llm.Tests\LoomaCloud.Infrastructure.Llm.Tests.csproj", "{ABEBF81A-3637-4CB8-8F23-1A3F203FDBD2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Application.Tests", "tests\LoomaCloud.Application.Tests\LoomaCloud.Application.Tests.csproj", "{3D061DF7-DEBC-45CA-BFE8-5DF8FDBFF166}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.CLI", "src\LoomaCloud.CLI\LoomaCloud.CLI.csproj", "{1F0DD209-63C7-45AF-A0B7-33410F219BA6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.MCP.Server", "src\LoomaCloud.MCP.Server\LoomaCloud.MCP.Server.csproj", "{2A6B0C3D-7E4F-4A1B-9C2D-3E4F5A6B7C8D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.MCP.Server.Tests", "tests\LoomaCloud.MCP.Server.Tests\LoomaCloud.MCP.Server.Tests.csproj", "{3B7C1D4E-8F5A-4B2C-AD3E-4F5A6B7C8D9E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.MCP.Client", "src\LoomaCloud.MCP.Client\LoomaCloud.MCP.Client.csproj", "{4C8D2E5F-9A6B-4C3D-BE4F-5A6B7C8D9E0F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.MCP.Client.Tests", "tests\LoomaCloud.MCP.Client.Tests\LoomaCloud.MCP.Client.Tests.csproj", "{5D9E3F6A-AB7C-4D4E-CF5A-6B7C8D9E0F1A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.UI.MAUI.Desktop", "src\LoomaCloud.UI.MAUI.Desktop\LoomaCloud.UI.MAUI.Desktop.csproj", "{6EAF4B7B-BC8D-4E5F-9D6B-7C8D9E0F1A2B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Infrastructure.LocalStore", "src\LoomaCloud.Infrastructure.LocalStore\LoomaCloud.Infrastructure.LocalStore.csproj", "{7FBA5C8C-CD9E-4F60-AE7C-8D9E0F1A2B3C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Infrastructure.LocalStore.Tests", "tests\LoomaCloud.Infrastructure.LocalStore.Tests\LoomaCloud.Infrastructure.LocalStore.Tests.csproj", "{8ACB6D9D-DEAF-5061-BF8D-9E0F1A2B3C4D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Infrastructure.WebSearch.DuckDuckGo", "src\LoomaCloud.Infrastructure.WebSearch.DuckDuckGo\LoomaCloud.Infrastructure.WebSearch.DuckDuckGo.csproj", "{1A2B3C4D-5E6F-4071-8B1C-2D3E4F5A6B7C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoomaCloud.Infrastructure.WebSearch.DuckDuckGo.Tests", "tests\LoomaCloud.Infrastructure.WebSearch.DuckDuckGo.Tests\LoomaCloud.Infrastructure.WebSearch.DuckDuckGo.Tests.csproj", "{2B3C4D5E-6F70-4182-9C2D-3E4F5A6B7C8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6E76560D-9A4D-49EE-BCFD-2CD983F7CF88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E76560D-9A4D-49EE-BCFD-2CD983F7CF88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E76560D-9A4D-49EE-BCFD-2CD983F7CF88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E76560D-9A4D-49EE-BCFD-2CD983F7CF88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44656E23-DF2C-42FD-B6F3-9EBEDA933DAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44656E23-DF2C-42FD-B6F3-9EBEDA933DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44656E23-DF2C-42FD-B6F3-9EBEDA933DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44656E23-DF2C-42FD-B6F3-9EBEDA933DAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE2057D1-E573-4DAC-BD76-B6C8EC461A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE2057D1-E573-4DAC-BD76-B6C8EC461A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE2057D1-E573-4DAC-BD76-B6C8EC461A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE2057D1-E573-4DAC-BD76-B6C8EC461A6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28D733BA-7398-42FF-9D9C-EF8BDDF6C91D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28D733BA-7398-42FF-9D9C-EF8BDDF6C91D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28D733BA-7398-42FF-9D9C-EF8BDDF6C91D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28D733BA-7398-42FF-9D9C-EF8BDDF6C91D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF9C92D4-331C-430C-AE76-9095965FC5DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF9C92D4-331C-430C-AE76-9095965FC5DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF9C92D4-331C-430C-AE76-9095965FC5DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF9C92D4-331C-430C-AE76-9095965FC5DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABEBF81A-3637-4CB8-8F23-1A3F203FDBD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABEBF81A-3637-4CB8-8F23-1A3F203FDBD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABEBF81A-3637-4CB8-8F23-1A3F203FDBD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABEBF81A-3637-4CB8-8F23-1A3F203FDBD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D061DF7-DEBC-45CA-BFE8-5DF8FDBFF166}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D061DF7-DEBC-45CA-BFE8-5DF8FDBFF166}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D061DF7-DEBC-45CA-BFE8-5DF8FDBFF166}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D061DF7-DEBC-45CA-BFE8-5DF8FDBFF166}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F0DD209-63C7-45AF-A0B7-33410F219BA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F0DD209-63C7-45AF-A0B7-33410F219BA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F0DD209-63C7-45AF-A0B7-33410F219BA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F0DD209-63C7-45AF-A0B7-33410F219BA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A6B0C3D-7E4F-4A1B-9C2D-3E4F5A6B7C8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A6B0C3D-7E4F-4A1B-9C2D-3E4F5A6B7C8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A6B0C3D-7E4F-4A1B-9C2D-3E4F5A6B7C8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A6B0C3D-7E4F-4A1B-9C2D-3E4F5A6B7C8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B7C1D4E-8F5A-4B2C-AD3E-4F5A6B7C8D9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B7C1D4E-8F5A-4B2C-AD3E-4F5A6B7C8D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B7C1D4E-8F5A-4B2C-AD3E-4F5A6B7C8D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B7C1D4E-8F5A-4B2C-AD3E-4F5A6B7C8D9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C8D2E5F-9A6B-4C3D-BE4F-5A6B7C8D9E0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C8D2E5F-9A6B-4C3D-BE4F-5A6B7C8D9E0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C8D2E5F-9A6B-4C3D-BE4F-5A6B7C8D9E0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C8D2E5F-9A6B-4C3D-BE4F-5A6B7C8D9E0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D9E3F6A-AB7C-4D4E-CF5A-6B7C8D9E0F1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D9E3F6A-AB7C-4D4E-CF5A-6B7C8D9E0F1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D9E3F6A-AB7C-4D4E-CF5A-6B7C8D9E0F1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D9E3F6A-AB7C-4D4E-CF5A-6B7C8D9E0F1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EAF4B7B-BC8D-4E5F-9D6B-7C8D9E0F1A2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EAF4B7B-BC8D-4E5F-9D6B-7C8D9E0F1A2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EAF4B7B-BC8D-4E5F-9D6B-7C8D9E0F1A2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EAF4B7B-BC8D-4E5F-9D6B-7C8D9E0F1A2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FBA5C8C-CD9E-4F60-AE7C-8D9E0F1A2B3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FBA5C8C-CD9E-4F60-AE7C-8D9E0F1A2B3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FBA5C8C-CD9E-4F60-AE7C-8D9E0F1A2B3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FBA5C8C-CD9E-4F60-AE7C-8D9E0F1A2B3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8ACB6D9D-DEAF-5061-BF8D-9E0F1A2B3C4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8ACB6D9D-DEAF-5061-BF8D-9E0F1A2B3C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8ACB6D9D-DEAF-5061-BF8D-9E0F1A2B3C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8ACB6D9D-DEAF-5061-BF8D-9E0F1A2B3C4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A2B3C4D-5E6F-4071-8B1C-2D3E4F5A6B7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A2B3C4D-5E6F-4071-8B1C-2D3E4F5A6B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A2B3C4D-5E6F-4071-8B1C-2D3E4F5A6B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A2B3C4D-5E6F-4071-8B1C-2D3E4F5A6B7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B3C4D5E-6F70-4182-9C2D-3E4F5A6B7C8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B3C4D5E-6F70-4182-9C2D-3E4F5A6B7C8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B3C4D5E-6F70-4182-9C2D-3E4F5A6B7C8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B3C4D5E-6F70-4182-9C2D-3E4F5A6B7C8D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

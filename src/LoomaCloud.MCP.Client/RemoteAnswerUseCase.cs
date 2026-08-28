@@ -1,0 +1,37 @@
+using LoomaCloud.Application.UseCases;
+using LoomaCloud.Core.Entities;
+using ModelContextProtocol.Client;
+
+namespace LoomaCloud.MCP.Client;
+
+/// <summary>
+/// Remote (MCP-client-mode) implementation — calls the <c>looma_answer</c>
+/// tool on a remote LoomaCloud.MCP.Server. Citations arriving over the wire have
+/// their <see cref="DocumentChunk.Embedding"/> stripped (the server never
+/// sends it — see <c>LoomaCloud.MCP.Server.Tools.AnswerTool</c>'s doc comment);
+/// callers that only display citations are unaffected, but nothing here
+/// should assume a populated embedding on a citation chunk.
+/// </summary>
+public sealed class RemoteAnswerUseCase : IAnswerUseCase
+{
+    private readonly McpClient _client;
+
+    public RemoteAnswerUseCase(McpClient client)
+    {
+        _client = client;
+    }
+
+    public IAsyncEnumerable<AnswerToken> AnswerAsync(
+        string question,
+        ThinkingMode thinkingMode = ThinkingMode.Ask,
+        CancellationToken cancellationToken = default)
+    {
+        var arguments = new Dictionary<string, object?>
+        {
+            ["question"] = question,
+            ["think"] = thinkingMode == ThinkingMode.Think
+        };
+
+        return RemoteStreamHelper.StreamAsync<AnswerToken>(_client, "looma_answer", arguments, cancellationToken);
+    }
+}

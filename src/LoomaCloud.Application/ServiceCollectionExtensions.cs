@@ -1,0 +1,77 @@
+using LoomaCloud.Application.Configuration;
+using LoomaCloud.Application.UseCases;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace LoomaCloud.Application;
+
+/// <summary>
+/// Registers the concrete use-case implementations against the
+/// milestone-1 interfaces. Callers must separately register
+/// <c>IVectorStore</c>, <c>IAnswerCache</c>,
+/// <c>IEmbeddingGenerator&lt;string, Embedding&lt;float&gt;&gt;</c>,
+/// <c>IChatClient</c>, and <c>IWebSearchProvider</c> (e.g. via
+/// <c>LoomaCloud.Infrastructure.VectorStore.Qdrant</c> /
+/// <c>LoomaCloud.Infrastructure.Llm</c> / <c>LoomaCloud.Infrastructure.WebSearch.SearXng</c>'s
+/// own extensions) — this method only wires the Application-layer
+/// orchestration on top of them.
+///
+/// <see cref="IChatCompletionUseCase"/> is included here — it's stateless
+/// generation only (retrieval + prompt + LLM call), needs nothing beyond
+/// what every other use case in this list already needs, and both
+/// LoomaCloud.MCP.Server (as the <c>looma_chat</c> tool) and Standalone mode's
+/// <see cref="ChatUseCase"/> depend on it directly.
+///
+/// <see cref="IChatUseCase"/> and <see cref="ISavedAnswerUseCase"/> are
+/// deliberately NOT registered here — see
+/// <see cref="AddLoomaCloudLocalChatOrchestration"/>.
+/// </summary>
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddLoomaCloudApplicationUseCases(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<RagOptions>().Bind(configuration.GetSection(RagOptions.SectionName));
+        services.AddOptions<ChatModelOptions>().Bind(configuration.GetSection(ChatModelOptions.SectionName));
+        services.AddOptions<EmbeddingModelOptions>().Bind(configuration.GetSection(EmbeddingModelOptions.SectionName));
+        services.AddOptions<ImageEmbeddingModelOptions>().Bind(configuration.GetSection(ImageEmbeddingModelOptions.SectionName));
+
+        services.AddSingleton<IIndexingUseCase, IndexingUseCase>();
+        services.AddSingleton<ISearchUseCase, SearchUseCase>();
+        services.AddSingleton<IAnswerUseCase, AnswerUseCase>();
+        services.AddSingleton<ICountUseCase, CountUseCase>();
+        services.AddSingleton<IChatCompletionUseCase, ChatCompletionUseCase>();
+        services.AddSingleton<IChatModelCapabilities, ChatModelCapabilities>();
+        services.AddSingleton<ITranscriptionUseCase, TranscriptionUseCase>();
+        services.AddSingleton<IImageCaptionUseCase, ImageCaptionUseCase>();
+        services.AddSingleton<IDocumentExtractionUseCase, DocumentExtractionUseCase>();
+        services.AddSingleton<IDocumentExportUseCase, DocumentExportUseCase>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Local chat-session and saved-answer orchestration —
+    /// <see cref="IChatUseCase"/> (needs <c>IChatSessionStore</c> +
+    /// <see cref="IChatCompletionUseCase"/>, both already registered) and
+    /// <see cref="ISavedAnswerUseCase"/> (needs <c>ISavedAnswerStore</c>).
+    /// Callers must register <c>IChatSessionStore</c>/<c>ISavedAnswerStore</c>
+    /// separately (e.g. <c>LoomaCloud.Infrastructure.LocalStore</c>'s
+    /// <c>AddLoomaCloudLocalChatStore</c>) and this method's own
+    /// <see cref="IChatCompletionUseCase"/> dependency (via
+    /// <see cref="AddLoomaCloudApplicationUseCases"/>) before calling this.
+    ///
+    /// Split out from <see cref="AddLoomaCloudApplicationUseCases"/> specifically
+    /// because LoomaCloud.MCP.Server doesn't need this at all — chat sessions
+    /// live client-side only (see <see cref="IChatCompletionUseCase"/>'s
+    /// doc comment) — while LoomaCloud.MCP.Client's McpClient-mode composition
+    /// root registers <see cref="IChatUseCase"/> itself (as
+    /// <c>RemoteChatUseCase</c>) instead of calling this.
+    /// </summary>
+    public static IServiceCollection AddLoomaCloudLocalChatOrchestration(this IServiceCollection services)
+    {
+        services.AddSingleton<IChatUseCase, ChatUseCase>();
+        services.AddSingleton<ISavedAnswerUseCase, SavedAnswerUseCase>();
+
+        return services;
+    }
+}
