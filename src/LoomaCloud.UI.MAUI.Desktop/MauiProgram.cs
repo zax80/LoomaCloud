@@ -116,6 +116,7 @@ public static class MauiProgram
         {
             configuration = new ConfigurationBuilder()
                 .AddJsonFile(configPath, optional: false, reloadOnChange: false)
+                .AddUserSecrets(typeof(MauiProgram).Assembly, optional: true)
                 .Build();
         }
         catch (Exception ex)

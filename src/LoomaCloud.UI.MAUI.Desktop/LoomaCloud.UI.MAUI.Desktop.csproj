@@ -9,6 +9,9 @@
 		     (NETSDK1013). -->
 		<TargetFramework></TargetFramework>
 
+		<!-- Same id as LoomaCloud.CLI / MCP.Server — see docs/secrets.md. -->
+		<UserSecretsId>a7d2c4e1-3b5f-4c68-9e0a-1f2b3c4d5e6f</UserSecretsId>
+
 		<!-- Desktop only, per docs/looma-project-brief.md: Windows + Mac
 		     Catalyst. Android/iOS belong to the separate (not yet built)
 		     LoomaCloud.UI.MAUI.Mobile project, not this one. Mac Catalyst can only
@@ -89,6 +92,7 @@
 		<!-- Not transitively available here the way it is for LoomaCloud.CLI —
 		     AddJsonFile lives in this package specifically. -->
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
 		<!-- Microphone recording for chat voice input — see Directory.Packages.props. -->
 		<PackageReference Include="Plugin.Maui.Audio" />
 	</ItemGroup>

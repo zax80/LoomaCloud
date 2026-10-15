@@ -3,6 +3,9 @@
   <PropertyGroup>
     <RootNamespace>LoomaCloud.MCP.Server</RootNamespace>
     <AssemblyName>looma-mcp-server</AssemblyName>
+    <!-- Same id as LoomaCloud.CLI / MAUI Desktop — see docs/secrets.md.
+         Microsoft.NET.Sdk.Web already ships the UserSecrets package. -->
+    <UserSecretsId>a7d2c4e1-3b5f-4c68-9e0a-1f2b3c4d5e6f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

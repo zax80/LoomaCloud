@@ -161,6 +161,13 @@ public sealed class ChatCompletionUseCase : IChatCompletionUseCase
         "you may reformulate — but never as license to add anything beyond what was already " +
         "grounded.";
 
+    private const string SmallTalkSystemPrompt =
+        "You are LoomaCloud (also called Looma), a friendly assistant that answers questions about the " +
+        "user's own indexed documents, images, and audio. The user's message is only a greeting, thanks, " +
+        "or a farewell. Reply warmly in one or two short sentences, in the same language the user wrote " +
+        "in, and invite them to ask about their documents. Do not state facts about the world and do " +
+        "not claim abilities beyond answering questions about their documents.";
+
     /// <summary>
     /// Total character budget across ALL sticky attachments combined in
     /// one prompt — a session with several attached files over time could
@@ -231,6 +238,32 @@ public sealed class ChatCompletionUseCase : IChatCompletionUseCase
         ThinkingMode thinkingMode = ThinkingMode.Ask,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        // A bare greeting/thanks (optionally addressed to the assistant by
+        // name) is conversation, not a document question: answer it
+        // directly, with no retrieval and no web search. See SmallTalkDetector.
+        if (string.IsNullOrWhiteSpace(attachmentContext)
+            && await IsSmallTalkAsync(message, cancellationToken).ConfigureAwait(false))
+        {
+            var smallTalkMessages = new List<ChatMessage>
+            {
+                new(ChatRole.System, SmallTalkSystemPrompt),
+                new(ChatRole.User, message)
+            };
+
+            await foreach (var update in _chatClient
+                .GetStreamingResponseAsync(smallTalkMessages, new ChatOptions { Temperature = 0.5f, MaxOutputTokens = 120 }, cancellationToken)
+                .ConfigureAwait(false))
+            {
+                if (!string.IsNullOrEmpty(update.Text))
+                {
+                    yield return new AnswerToken { Text = update.Text, IsFinal = false };
+                }
+            }
+
+            yield return new AnswerToken { Text = string.Empty, IsFinal = true, Citations = new List<DocumentChunk>() };
+            yield break;
+        }
+
         var retrievalQuery = _ragOptions.EnableQueryReformulation
             ? await ReformulateQueryAsync(history, message, cancellationToken).ConfigureAwait(false)
             : message;
@@ -363,6 +396,72 @@ public sealed class ChatCompletionUseCase : IChatCompletionUseCase
         }
 
         yield return new AnswerToken { Text = string.Empty, IsFinal = true, Citations = citations };
+    }
+
+    private const int MaxSmallTalkCacheEntries = 500;
+
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, bool> SmallTalkClassifications = new();
+
+    private const string SmallTalkClassifierPrompt =
+        "Classify the user's message, written in any language. Reply with exactly one word. " +
+        "SMALLTALK if it is ONLY a greeting, thanks, farewell, or friendly pleasantry (optionally " +
+        "addressed to an assistant named Looma/LoomaCloud) and asks for no information or action. " +
+        "QUESTION in every other case — including any request, question, or topic, however short.";
+
+    /// <summary>
+    /// Fast path: the bilingual vocabulary in <see cref="SmallTalkDetector"/>
+    /// (no model call). Otherwise, for a message short enough to be a
+    /// greeting in some other language, one tiny classification call.
+    /// Any failure means "treat as a real question" — the previous,
+    /// always-safe behavior — never a failed turn.
+    /// </summary>
+    private async Task<bool> IsSmallTalkAsync(string message, CancellationToken cancellationToken)
+    {
+        if (SmallTalkDetector.IsSmallTalk(message))
+        {
+            return true;
+        }
+
+        if (!SmallTalkDetector.MightBeSmallTalk(message))
+        {
+            return false;
+        }
+
+        // A greeting is only ever classified once per process: repeated
+        // "Bonjour Looma" costs nothing after the first call.
+        var key = SmallTalkDetector.NormalizeKey(message);
+        if (SmallTalkClassifications.TryGetValue(key, out var cached))
+        {
+            return cached;
+        }
+
+        try
+        {
+            var response = await _chatClient.GetResponseAsync(
+                    [new ChatMessage(ChatRole.System, SmallTalkClassifierPrompt), new ChatMessage(ChatRole.User, message)],
+                    new ChatOptions { Temperature = 0f, MaxOutputTokens = 8 },
+                    cancellationToken)
+                .ConfigureAwait(false);
+
+            var isSmallTalk = response.Text.Trim().StartsWith("SMALLTALK", StringComparison.OrdinalIgnoreCase);
+
+            // Bounded: short messages only, but never let this grow forever.
+            if (SmallTalkClassifications.Count >= MaxSmallTalkCacheEntries)
+            {
+                SmallTalkClassifications.Clear();
+            }
+
+            SmallTalkClassifications[key] = isSmallTalk;
+            return isSmallTalk;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     /// <summary>

@@ -4,6 +4,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>LoomaCloud.CLI</RootNamespace>
     <AssemblyName>looma</AssemblyName>
+    <!-- One shared id across CLI, MCP.Server and MAUI Desktop, so a single
+         "Manage User Secrets" file (%APPDATA%\Microsoft\UserSecrets\<id>\secrets.json)
+         serves all three. See docs/secrets.md. -->
+    <UserSecretsId>a7d2c4e1-3b5f-4c68-9e0a-1f2b3c4d5e6f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +43,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
   </ItemGroup>
 
 </Project>

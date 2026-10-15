@@ -74,6 +74,7 @@ public static class Program
         {
             configuration = new ConfigurationBuilder()
                 .AddJsonFile(configPath, optional: false, reloadOnChange: false)
+                .AddUserSecrets(typeof(Program).Assembly, optional: true)
                 .Build();
         }
         catch (Exception ex)

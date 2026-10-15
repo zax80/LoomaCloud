@@ -51,7 +51,7 @@ public static class ServiceCollectionExtensions
         // time, same as every other Add* method in this file.
         OpenAIClient openAiClient = baseModel.Provider switch
         {
-            "OpenAI" => CreateCloudOpenAiClient(baseModel, securityOptions),
+            "OpenAI" => CreateCloudOpenAiClient(baseModel, securityOptions, configuration),
             "Ollama" => CreateLocalOpenAiClient(baseModel, securityOptions, nameof(LlmOptions.BaseModel)),
             _ => throw new NotSupportedException(
                 $"'{LlmOptions.SectionName}:{nameof(LlmOptions.BaseModel)}:Provider' is set to " +
@@ -268,7 +268,8 @@ public static class ServiceCollectionExtensions
     /// API key sourced from <see cref="ModelEndpointOptions.ApiKeyEnvVar"/>
     /// (never a raw key in config.json).
     /// </summary>
-    private static OpenAIClient CreateCloudOpenAiClient(ModelEndpointOptions model, SecurityOptions security)
+    private static OpenAIClient CreateCloudOpenAiClient(
+        ModelEndpointOptions model, SecurityOptions security, IConfiguration configuration)
     {
         var configPath = $"{LlmOptions.SectionName}:{nameof(LlmOptions.BaseModel)}";
         ValidateCloudEndpoint(model.Endpoint, security, configPath);
@@ -280,12 +281,14 @@ public static class ServiceCollectionExtensions
                 "LoomaCloud never reads a raw API key from config.json.");
         }
 
-        var apiKey = Environment.GetEnvironmentVariable(model.ApiKeyEnvVar);
+        // Environment variable wins; otherwise the user-secrets store (the
+        // composition root adds it to `configuration`) — see docs/secrets.md.
+        var apiKey = Environment.GetEnvironmentVariable(model.ApiKeyEnvVar) ?? configuration[model.ApiKeyEnvVar];
         if (string.IsNullOrWhiteSpace(apiKey))
         {
             throw new InvalidOperationException(
-                $"Environment variable '{model.ApiKeyEnvVar}' (named by '{configPath}:ApiKeyEnvVar') " +
-                "is not set or is empty. Set it before starting LoomaCloud.");
+                $"Secret '{model.ApiKeyEnvVar}' (named by '{configPath}:ApiKeyEnvVar') is not set — neither as an " +
+                "environment variable nor in user secrets. Set it before starting LoomaCloud; see docs/secrets.md.");
         }
 
         var openAiCompatibleBase = new Uri($"{model.Endpoint.TrimEnd('/')}/v1");

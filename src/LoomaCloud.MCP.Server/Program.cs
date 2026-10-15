@@ -55,6 +55,9 @@ public static class Program
         try
         {
             builder.Configuration.AddJsonFile(configPath, optional: false, reloadOnChange: false);
+            // Secrets (API keys) from `dotnet user-secrets` / VS "Manage User
+            // Secrets" — works in any environment, not just Development.
+            builder.Configuration.AddUserSecrets(typeof(Program).Assembly, optional: true);
         }
         catch (Exception ex)
         {
@@ -83,14 +86,17 @@ public static class Program
             return 1;
         }
 
-        var apiKey = Environment.GetEnvironmentVariable(apiKeyEnvVar);
+        // Environment variable wins; otherwise the user-secrets store.
+        var apiKey = Environment.GetEnvironmentVariable(apiKeyEnvVar) ?? configuration[apiKeyEnvVar];
         if (string.IsNullOrWhiteSpace(apiKey))
         {
             Console.Error.WriteLine(
-                $"Environment variable '{apiKeyEnvVar}' is not set. Refusing to start an MCP server without " +
-                "an API key configured — every connection must be authenticated. Set it and retry, e.g.:\n" +
-                $"  PowerShell:  $env:{apiKeyEnvVar} = \"<a long random string>\"\n" +
-                $"  bash:        export {apiKeyEnvVar}=\"<a long random string>\"");
+                $"Secret '{apiKeyEnvVar}' is not set (neither as an environment variable nor in user secrets). " +
+                "Refusing to start an MCP server without an API key configured — every connection must be " +
+                "authenticated. Set it and retry, e.g.:\n" +
+                $"  user secrets: dotnet user-secrets set {apiKeyEnvVar} \"<a long random string>\" --project src\\LoomaCloud.MCP.Server\n" +
+                $"  PowerShell:   $env:{apiKeyEnvVar} = \"<a long random string>\"\n" +
+                "  See docs/secrets.md.");
             return 1;
         }
 

@@ -34,12 +34,14 @@ public static class LoomaCloudMcpConnection
             throw new InvalidOperationException("Mcp:Auth:ApiKeyEnvVar is not set in config.json.");
         }
 
-        var apiKey = Environment.GetEnvironmentVariable(apiKeyEnvVar);
+        // Environment variable wins; otherwise the user-secrets store (the
+        // composition root adds it to `configuration`) — see docs/secrets.md.
+        var apiKey = Environment.GetEnvironmentVariable(apiKeyEnvVar) ?? configuration[apiKeyEnvVar];
         if (string.IsNullOrWhiteSpace(apiKey))
         {
             throw new InvalidOperationException(
-                $"Environment variable '{apiKeyEnvVar}' is not set. It needs to hold the same API key the " +
-                "remote LoomaCloud.MCP.Server was started with.");
+                $"Secret '{apiKeyEnvVar}' is not set (neither as an environment variable nor in user secrets). " +
+                "It needs to hold the same API key the remote LoomaCloud.MCP.Server was started with. See docs/secrets.md.");
         }
 
         var transport = new HttpClientTransport(new HttpClientTransportOptions
